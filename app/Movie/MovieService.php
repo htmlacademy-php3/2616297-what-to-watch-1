@@ -1,6 +1,6 @@
 <?php
 
-readonly class MovieService
+final readonly class MovieService
 {
     public function __construct(
         private MovieRepositoryInterface $movieRepository,

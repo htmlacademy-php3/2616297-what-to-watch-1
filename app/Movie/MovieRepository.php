@@ -2,7 +2,7 @@
 
 use Psr\Http\Client\ClientInterface;
 
-class MovieRepository implements MovieRepositoryInterface
+final class MovieRepository implements MovieRepositoryInterface
 {
     public function __construct(
         private ClientInterface $client,

@@ -1,6 +1,6 @@
 <?php
 
-class Movie
+final class Movie
 {
 
 }
