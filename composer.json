@@ -1,0 +1,5 @@
+{
+  "require": {
+    "psr/http-client": "1.0.3"
+  }
+}
