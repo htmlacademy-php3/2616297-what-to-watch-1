@@ -1,5 +1,7 @@
 <?php
 
+namespace app\Movie;
+
 final readonly class MovieService
 {
     public function __construct(
