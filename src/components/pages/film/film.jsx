@@ -49,7 +49,7 @@ function Film(props) {
         </svg>
       </div>
 
-      <section className="film-card film-card--full" style=>
+      <section className="film-card film-card--full">
         <div className="film-card__hero">
           <div className="film-card__bg">
             <img src={backgroundImage} alt={name}/>
