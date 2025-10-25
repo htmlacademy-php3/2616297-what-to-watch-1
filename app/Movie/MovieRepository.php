@@ -1,5 +1,7 @@
 <?php
 
+namespace app\Movie;
+
 use Psr\Http\Client\ClientInterface;
 
 final class MovieRepository implements MovieRepositoryInterface
