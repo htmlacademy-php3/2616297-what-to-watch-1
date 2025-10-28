@@ -27,11 +27,11 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/user', 'about');
     Route::patch('/user', 'update');
     Route::post('/logout', 'logout');
-    Route::post('/api/films/{id}/favorite/', 'setFavorite');
-    Route::delete('/api/films/{id}/favorite/', 'removeFavorite');
-    Route::get('/api/favorite', 'favoriteFilms');
-    Route::post('/api/films/{id}/favorite/', 'setFavorite');
-    Route::delete('/api/films/{id}/favorite/', 'removeFavorite');
+    Route::post('/films/{id}/favorite/', 'setFavorite');
+    Route::delete('/films/{id}/favorite/', 'removeFavorite');
+    Route::get('/favorite', 'favoriteFilms');
+    Route::post('/films/{id}/favorite/', 'setFavorite');
+    Route::delete('/films/{id}/favorite/', 'removeFavorite');
 });
 
 Route::controller(FilmController::class)->group(function () {
