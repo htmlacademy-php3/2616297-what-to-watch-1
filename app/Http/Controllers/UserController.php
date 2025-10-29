@@ -14,7 +14,7 @@ class UserController extends Controller
     {
     }
 
-    public function about()
+    public function index()
     {
     }
 

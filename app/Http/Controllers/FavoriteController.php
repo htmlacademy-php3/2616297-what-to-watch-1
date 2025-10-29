@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-class FilmController extends Controller
+class FavoriteController extends Controller
 {
     public function index()
-    {
-    }
-
-    public function show()
     {
     }
 
@@ -16,7 +12,7 @@ class FilmController extends Controller
     {
     }
 
-    public function update()
+    public function destroy()
     {
     }
 }
