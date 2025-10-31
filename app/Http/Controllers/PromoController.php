@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Responses\BaseResponse;
+
 class PromoController extends Controller
 {
-    public function index()
+    public function index(): BaseResponse
     {
     }
 
-    public function create()
+    public function create(): BaseResponse
     {
     }
 }
