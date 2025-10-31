@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Responses\BaseResponse;
+
 class GenreController
 {
-    public function index()
+    public function index(): BaseResponse
     {
     }
 
-    public function update()
+    public function update(): BaseResponse
     {
     }
 }
