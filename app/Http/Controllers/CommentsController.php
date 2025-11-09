@@ -10,7 +10,6 @@ class CommentsController extends Controller
 {
     public function index(): BaseResponse
     {
-        return new SuccessResponse(['test'], Response::HTTP_CREATED);
     }
 
     public function create(): BaseResponse
