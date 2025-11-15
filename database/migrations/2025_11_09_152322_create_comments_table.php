@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('film_id')->constrained();
             $table->text('text');
             $table->integer('rating');
             $table->foreignId('comment_id')->nullable()->constrained();
