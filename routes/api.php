@@ -27,37 +27,37 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
-Route::post('/logout', [UserController::class, 'logout']);
-Route::get('/favorite', [FavoriteController::class, 'index']);
+Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+Route::get('/favorite', [FavoriteController::class, 'index'])->middleware('auth:sanctum');
 
 Route::prefix('/user')->group(function () {
-    Route::get('/', [UserController::class, 'index']);
-    Route::patch('/', [UserController::class, 'update']);
+    Route::get('/', [UserController::class, 'index'])->middleware('auth:sanctum');
+    Route::patch('/', [UserController::class, 'update'])->middleware('auth:sanctum');
 });
 
 Route::prefix('/films')->group(function () {
-    Route::post('/{id}/favorite/', [FavoriteController::class, 'create']);
-    Route::delete('/{id}/favorite/', [FavoriteController::class, 'destroy']);
+    Route::post('/{id}/favorite/', [FavoriteController::class, 'create'])->middleware('auth:sanctum');
+    Route::delete('/{id}/favorite/', [FavoriteController::class, 'destroy'])->middleware('auth:sanctum');
     Route::get('/', [FilmController::class, 'index']);
     Route::get('/{id}', [FilmController::class, 'show']);
     Route::get('/{id}/similar', [SimilarController::class, 'index']);
     Route::post('/', [FilmController::class, 'create']);
-    Route::patch('/{id}', [FilmController::class, 'update']);
+    Route::patch('/{id}', [FilmController::class, 'update'])->middleware('auth:sanctum');
 });
 
 Route::prefix('/genres')->group(function () {
     Route::get('/', [GenreController::class, 'index']);
-    Route::patch('/{genre}', [GenreController::class, 'update']);
+    Route::patch('/{genre}', [GenreController::class, 'update'])->middleware('auth:sanctum');
 });
 
 Route::prefix('/comments')->group(function () {
     Route::get('/{id}', [CommentsController::class, 'index']);
-    Route::post('/{id}', [CommentsController::class, 'create']);
-    Route::patch('/{comment}', [CommentsController::class, 'update']);
+    Route::post('/{id}', [CommentsController::class, 'create'])->middleware('auth:sanctum');
+    Route::patch('/{comment}', [CommentsController::class, 'update'])->middleware('auth:sanctum');
     Route::delete('/{comment}', [CommentsController::class, 'destroy']);
 });
 
 Route::prefix('/promo')->group(function () {
     Route::get('/', [PromoController::class, 'index']);
-    Route::post('/{id}', [PromoController::class, 'create']);
+    Route::post('/{id}', [PromoController::class, 'create'])->middleware('auth:sanctum');
 });
