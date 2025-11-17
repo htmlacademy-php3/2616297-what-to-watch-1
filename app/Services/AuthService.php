@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\DTO\CreateUserDTO;
-use App\DTO\RegisterUserDTO;
+use App\Data\LoginUserData;
+use App\Data\RegisterUserData;
 use App\Exceptions\InvalidCredentialsException;
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
@@ -17,12 +17,12 @@ class AuthService
     ) {
     }
 
-    public function login($email, $password): NewAccessToken
+    public function login(LoginUserData $DTO): NewAccessToken
     {
         if (false === Auth::attempt(
                 [
-                    'email' => $email,
-                    'password' => $password
+                    'email' => $DTO->email,
+                    'password' => $DTO->password,
                 ]
             )) {
             throw new InvalidCredentialsException();
@@ -31,17 +31,10 @@ class AuthService
         return Auth::user()->createToken(env('APP_NAME', 'Laravel'));
     }
 
-    public function register(RegisterUserDTO $DTO): NewAccessToken
+    public function register(RegisterUserData $DTO): NewAccessToken
     {
-        $avatarPath = $DTO->avatar?->store('img/avatar');
-
         $id = $this->userRepository->create(
-            new CreateUserDTO(
-                $DTO->email,
-                $DTO->password,
-                $DTO->name,
-                $avatarPath
-            )
+            $DTO
         );
 
         return User::find($id)->createToken(env('APP_NAME', 'Laravel'));

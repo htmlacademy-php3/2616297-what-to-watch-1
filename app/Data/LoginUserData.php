@@ -1,14 +1,14 @@
 <?php
 
-namespace App\DTO;
+namespace App\Data;
 
-readonly class CreateUserDTO
+use Spatie\LaravelData\Data;
+
+class LoginUserData extends Data
 {
     public function __construct(
         public string $email,
         public string $password,
-        public string $name,
-        public ?string $avatarPath = null,
     ) {
     }
 }

@@ -2,10 +2,9 @@
 
 namespace App\Repositories;
 
-use App\DTO\CreateUserDTO;
-use App\Entities\User;
+use App\Data\RegisterUserData;
 
 interface UserRepositoryInterface
 {
-    public function create(CreateUserDTO $DTO): int;
+    public function create(RegisterUserData $DTO): int;
 }

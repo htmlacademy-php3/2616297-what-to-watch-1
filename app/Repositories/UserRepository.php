@@ -2,22 +2,20 @@
 
 namespace App\Repositories;
 
-use App\DTO\CreateUserDTO;
+use App\Data\RegisterUserData;
 use App\Models\User as UserModel;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function create(CreateUserDTO $DTO): int
+    public function create(RegisterUserData $DTO): int
     {
         $userData = [
             'email' => $DTO->email,
-            'password' => $DTO->password,
+            'password' => Hash::make($DTO->password),
             'name' => $DTO->name,
+            'profile_picture' => $DTO->file
         ];
-
-        if (null !== $DTO->avatarPath) {
-            $userData['profile_picture'] = $DTO->avatarPath;
-        }
 
         $user = UserModel::create($userData);
 
