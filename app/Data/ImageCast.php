@@ -13,7 +13,7 @@ class ImageCast implements Cast
     public function cast(DataProperty $property, mixed $value, array $properties, CreationContext $context): ?string
     {
         if ($value instanceof UploadedFile) {
-            return $value->store('img/avatar');
+            return $value->store('avatar');
         }
 
         return null;
