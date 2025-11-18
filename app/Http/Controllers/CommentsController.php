@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Responses\BaseResponse;
+use App\Models\Comment;
 
 class CommentsController extends Controller
 {
@@ -19,7 +20,7 @@ class CommentsController extends Controller
     }
 
 
-    public function destroy(): BaseResponse
+    public function destroy(Comment $comment): BaseResponse
     {
     }
 }
