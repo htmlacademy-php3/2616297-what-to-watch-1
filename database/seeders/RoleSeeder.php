@@ -18,6 +18,7 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'remove comments']);
         Permission::create(['name' => 'publish films']);
         Permission::create(['name' => 'edit films']);
+        Permission::create(['name' => 'set promo film']);
 
         Role::create(['name' => 'moderator'])
             ->givePermissionTo(
