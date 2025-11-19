@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $film_id
  * @property string $text
+ * @property string $author_name
  * @property int $rating
  * @property null|int $comment_id
  */
@@ -31,5 +32,10 @@ class Comment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getAuthorNameAttribute(): string
+    {
+        return null !== $this->user ? $this->user->name : 'Аноним';
     }
 }
