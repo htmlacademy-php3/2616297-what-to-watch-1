@@ -17,11 +17,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            RoleSeeder::class,
+        ]);
+
+        $user = User::factory()->afterCreating(function ($user) {
+            if (1 === rand(0, 1)) {
+                $user->assignRole('moderator');
+            }
+        });
+
         Genre::factory()
             ->has(
                 Film::factory(5)
-                    ->has(User::factory(1))
-                    ->has(Comment::factory(5))
+                    ->has($user)
+                    ->has(Comment::factory(5)->for($user))
             )
             ->create();
     }

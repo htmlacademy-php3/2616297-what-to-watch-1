@@ -38,7 +38,11 @@ Route::prefix('/user')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('/films')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
-        Route::patch('/{id}', [FilmController::class, 'update']);
+        Route::middleware('role:moderator')->group(function () {
+            Route::post('/', [FilmController::class, 'create']);
+            Route::patch('/{id}', [FilmController::class, 'update']);
+        });
+
         Route::post('/{id}/favorite/', [FavoriteController::class, 'create']);
         Route::delete('/{id}/favorite/', [FavoriteController::class, 'destroy']);
     });
@@ -46,12 +50,13 @@ Route::prefix('/films')->group(function () {
     Route::get('/', [FilmController::class, 'index']);
     Route::get('/{id}', [FilmController::class, 'show']);
     Route::get('/{id}/similar', [SimilarController::class, 'index']);
-    Route::post('/', [FilmController::class, 'create']);
 });
 
 Route::prefix('/genres')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
-        Route::patch('/{genre}', [GenreController::class, 'update']);
+        Route::middleware('role:moderator')->group(function () {
+            Route::patch('/{genre}', [GenreController::class, 'update']);
+        });
     });
 
     Route::get('/', [GenreController::class, 'index']);
@@ -60,16 +65,21 @@ Route::prefix('/genres')->group(function () {
 Route::prefix('/comments')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}', [CommentsController::class, 'create']);
-        Route::patch('/{comment}', [CommentsController::class, 'update']);
+
+        Route::middleware('can:manage-comment,comment')->group(function () {
+            Route::patch('/{comment}', [CommentsController::class, 'update']);
+            Route::delete('/{comment}', [CommentsController::class, 'destroy']);
+        });
     });
 
     Route::get('/{id}', [CommentsController::class, 'index']);
-    Route::delete('/{comment}', [CommentsController::class, 'destroy']);
 });
 
 Route::prefix('/promo')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/{id}', [PromoController::class, 'create']);
+        Route::middleware('role:moderator')->group(function () {
+            Route::post('/{id}', [PromoController::class, 'create']);
+        });
     });
 
     Route::get('/', [PromoController::class, 'index']);
