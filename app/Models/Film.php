@@ -66,9 +66,7 @@ class Film extends Model
     public function getRatingAttribute(): string
     {
         return round(
-            DB::table('comments')
-                ->where('film_id', $this->id)
-                ->avg('rating'),
+            $this->comments->avg('rating'),
             1
         );
     }
