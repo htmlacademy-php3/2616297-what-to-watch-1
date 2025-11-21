@@ -16,15 +16,10 @@ class FilmModelTest extends TestCase
     {
         $film = Film::factory()
             ->for(Genre::factory())
+            ->has(Comment::factory()->count(3))
             ->create();
 
-        $this->assertEquals(0, $film->rating);
-
-        $comments = Comment::factory(3)
-            ->for($film)
-            ->create();
-
-        $avgRating = round($comments->avg('rating'), 1);
+        $avgRating = round($film->comments->avg('rating'), 1);
 
         $this->assertEquals($avgRating, $film->rating);
     }

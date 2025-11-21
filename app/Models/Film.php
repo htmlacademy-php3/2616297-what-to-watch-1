@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @property string $name
@@ -25,6 +24,7 @@ use Illuminate\Support\Facades\DB;
  * @property null|int $released
  * @property string $imdb_id
  * @property string $status
+ * @property-read float $rating
  */
 class Film extends Model
 {
@@ -63,7 +63,7 @@ class Film extends Model
         return $this->hasMany(Comment::class);
     }
 
-    public function getRatingAttribute(): string
+    public function getRatingAttribute(): float
     {
         return round(
             $this->comments->avg('rating'),

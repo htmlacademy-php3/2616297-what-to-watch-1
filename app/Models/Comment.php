@@ -21,7 +21,8 @@ class Comment extends Model
         'film_id',
         'text',
         'rating',
-        'comment_id'
+        'comment_id',
+        'user_id'
     ];
 
     public function film(): BelongsTo
