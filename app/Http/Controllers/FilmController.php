@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Responses\BaseResponse;
-use App\Models\User;
 
 class FilmController extends Controller
 {

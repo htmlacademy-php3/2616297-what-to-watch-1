@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property null|int $released
  * @property string $imdb_id
  * @property string $status
+ * @property-read float $rating
  */
 class Film extends Model
 {
@@ -60,5 +61,13 @@ class Film extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function getRatingAttribute(): float
+    {
+        return round(
+            $this->comments->avg('rating'),
+            1
+        );
     }
 }
