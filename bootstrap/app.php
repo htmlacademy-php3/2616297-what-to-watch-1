@@ -13,6 +13,7 @@ use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -39,6 +40,13 @@ return Application::configure(basePath: dirname(__DIR__))
             return new ErrorResponse(
                 __('http-statuses.403'),
                 Response::HTTP_FORBIDDEN,
+            );
+        });
+
+        $exceptions->render(function (NotFoundHttpException $e) {
+            return new ErrorResponse(
+                __('http-statuses.404'),
+                Response::HTTP_NOT_FOUND,
             );
         });
 

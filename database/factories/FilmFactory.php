@@ -20,7 +20,7 @@ class FilmFactory extends Factory
         $starring = implode(', ', $starring);
 
         return [
-            'name' => $this->faker->word,
+            'title' => $this->faker->word,
             'background_color' => $this->faker->hexColor,
             'video_link' => $this->faker->url,
             'preview_video_link' => $this->faker->url,
