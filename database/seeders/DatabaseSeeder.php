@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
         });
 
         Genre::factory()
+            ->count(3)
             ->has(
                 Film::factory(5)
                     ->has($user)

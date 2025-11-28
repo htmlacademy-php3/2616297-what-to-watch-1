@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Models\Comment;
 use App\Models\User;
+use App\Repositories\FilmRepository;
+use App\Repositories\FilmRepositoryInterface;
 use App\Repositories\UserRepository;
 use App\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Gate;
@@ -19,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(FilmRepositoryInterface::class, FilmRepository::class);
     }
 
     /**
