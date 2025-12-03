@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\Film;
 use App\Data\FilmsRequestData;
+use App\Jobs\ProcessPendingFilm;
+use App\Movie\MovieRepositoryInterface;
 use App\Repositories\FilmRepositoryInterface;
+use App\Repositories\GenreRepositoryInterface;
 
 class FilmService
 {
     public function __construct(
-        private FilmRepositoryInterface $filmRepository
+        private FilmRepositoryInterface $filmRepository,
+        private MovieRepositoryInterface $IMDBRepository,
+        private GenreRepositoryInterface $genreRepository,
     ) {
     }
 
@@ -35,5 +41,25 @@ class FilmService
         $returnCount = 4;
 
         return $this->filmRepository->getSimilar($data, $id, $returnCount);
+    }
+
+    public function createFilm(string $imdbId): int
+    {
+        $id = $this->filmRepository->create($imdbId);
+
+        ProcessPendingFilm::dispatch($id);
+
+        return $id;
+    }
+
+    public function updateWithIMDB(int $id): void
+    {
+        $imdbData = $this->IMDBRepository->findById($id);
+
+        if (null !== $imdbData->genre) {
+            $this->genreRepository->attachToGenre($id, $imdbData->genre);
+        }
+
+        $this->filmRepository->updateWithIMDB($id, $imdbData);
     }
 }
