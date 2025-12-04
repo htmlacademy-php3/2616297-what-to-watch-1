@@ -13,7 +13,7 @@ use Psr\Http\Client\ClientInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-final class IMDBRepository implements IMDBRepositoryInterface
+class IMDBRepository implements IMDBRepositoryInterface
 {
     public function __construct(
         private ClientInterface $client,
