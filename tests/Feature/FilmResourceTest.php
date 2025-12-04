@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\IMDB\IMDBRepository;
+use App\Jobs\ProcessPendingFilm;
 use App\Models\Comment;
 use App\Models\Film;
 use App\Models\Genre;
@@ -10,6 +12,9 @@ use Database\Seeders\RoleSeeder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Mockery;
+use Mockery\MockInterface;
+use Queue;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
@@ -259,7 +264,16 @@ class FilmResourceTest extends TestCase
 
     public function testModeratorCanPublishFilm(): void
     {
+        Queue::fake();
+
         $this->createModeratorRoleUser();
+
+        $this->instance(
+            IMDBRepository::class,
+            Mockery::mock(IMDBRepository::class, function (MockInterface $mock) {
+                $mock->shouldReceive('findById')->with(1)->once();
+            })
+        );
 
         $this->json(
             'POST',
@@ -270,10 +284,11 @@ class FilmResourceTest extends TestCase
         )
             ->assertStatus(Response::HTTP_CREATED);
 
-
         $this->assertDatabaseHas('films', [
             'imdb_id' => 'tt0482571',
         ]);
+
+        Queue::assertPushed(ProcessPendingFilm::class);
     }
 
     public function testModeratorCanEditFilmInfo(): void
