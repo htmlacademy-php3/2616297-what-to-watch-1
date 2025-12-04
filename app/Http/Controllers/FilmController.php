@@ -1,16 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Data\FilmsRequestData;
+use App\Data\FilmCreateData;
 use App\Http\Responses\BaseResponse;
+use App\IMDB\IMDBRepository;
 use App\Http\Responses\SuccessResponse;
 use App\Services\FilmService;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class FilmController extends Controller
 {
-    public function index(FilmsRequestData $data, FilmService $service): BaseResponse
+    public function index(FilmsRequestData $data, FilmService $service, IMDBRepository $repository)
     {
         return new SuccessResponse(
             $service->getAll(
@@ -30,8 +35,14 @@ class FilmController extends Controller
         );
     }
 
-    public function create(): BaseResponse
+    public function create(FilmCreateData $data, FilmService $service): BaseResponse
     {
+        return new SuccessResponse(
+            $service->createFilm(
+                $data->imdbId
+            ),
+            Response::HTTP_CREATED
+        );
     }
 
     public function update(): BaseResponse

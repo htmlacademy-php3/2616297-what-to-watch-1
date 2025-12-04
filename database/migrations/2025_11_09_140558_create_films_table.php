@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('films', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
+            $table->string('title', 255)->nullable();
             $table->string('poster_image', 255)->nullable();
             $table->string('preview_image', 255)->nullable();
             $table->string('background_image', 255)->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('director', 255)->nullable();
             $table->string('starring', 255)->nullable();
-            $table->foreignId('genre_id')->constrained();
+            $table->foreignId('genre_id')->nullable()->constrained();
             $table->integer('run_time')->nullable();
             $table->integer('released')->nullable();
             $table->string('imdb_id', 255);

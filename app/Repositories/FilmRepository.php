@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
-use App\Data\FilmsRequestData;
-use App\Enums\FilmStatus;
-use App\Http\Resources\FilmResource;
 use App\Models\Film;
 use App\Models\Genre;
+use App\DTO\IMDBMovieDTO;
+use App\Enums\FilmStatus;
+use App\Data\FilmsRequestData;
+use App\Http\Resources\FilmResource;
 use Illuminate\Database\Eloquent\Builder;
 
 class FilmRepository implements FilmRepositoryInterface
@@ -15,7 +18,7 @@ class FilmRepository implements FilmRepositoryInterface
     {
         return $this->queryFilms(
             $DTO->genre,
-            null !== $DTO->status ? (FilmStatus::tryFrom($DTO->status) ?? FilmStatus::READY): FilmStatus::READY,
+            null !== $DTO->status ? (FilmStatus::tryFrom($DTO->status) ?? FilmStatus::READY) : FilmStatus::READY,
             $DTO->orderBy ?? 'released',
             $DTO->orderTo ?? 'asc',
             $isAuthorized
@@ -111,5 +114,33 @@ class FilmRepository implements FilmRepositoryInterface
                 $orderBy,
                 null !== $order ? $order : 'asc'
             );
+    }
+
+    public function create(string $imdbId): int
+    {
+        $film = Film::create(
+            [
+                'imdb_id' => $imdbId,
+                'status' => FIlmStatus::PENDING
+            ]
+        );
+
+        return $film->id;
+    }
+
+    public function updateWithIMDB(int $id, IMDBMovieDTO $DTO): void
+    {
+        $film = Film::findOrFail($id);
+
+        $film->update(
+            [
+                'title' => $DTO->name,
+                'released' => $DTO->startYear,
+                'description' => $DTO->description,
+                'director' => $DTO->director,
+                'run_time' => $DTO->runTime,
+                'status' => FIlmStatus::ON_MODERATION
+            ]
+        );
     }
 }
