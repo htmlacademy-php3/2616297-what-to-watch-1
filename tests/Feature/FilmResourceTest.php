@@ -268,13 +268,6 @@ class FilmResourceTest extends TestCase
 
         $this->createModeratorRoleUser();
 
-        $this->instance(
-            IMDBRepository::class,
-            Mockery::mock(IMDBRepository::class, function (MockInterface $mock) {
-                $mock->shouldReceive('findById')->with(1)->once();
-            })
-        );
-
         $this->json(
             'POST',
             '/api/films/',
