@@ -1,26 +1,24 @@
 FROM php:8.4-cli-alpine
 
 RUN apk add --no-cache \
-    git \
-    curl \
-    zip \
-    unzip \
-    libzip-dev \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libxml2-dev \
-    oniguruma-dev \
-    nodejs \
-    npm \
-    mysql-client \
-    linux-headers \
-    $PHPIZE_DEPS
-
-RUN pecl install redis \
-    && docker-php-ext-enable redis
-
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+        git \
+        curl \
+        zip \
+        unzip \
+        libzip-dev \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        libxml2-dev \
+        oniguruma-dev \
+        nodejs \
+        npm \
+        mysql-client \
+        linux-headers \
+        $PHPIZE_DEPS \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
         bcmath \
