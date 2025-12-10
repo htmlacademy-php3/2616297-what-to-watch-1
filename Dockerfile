@@ -37,11 +37,9 @@ RUN mkdir -p storage/framework/sessions \
     && mkdir -p storage/framework/views \
     && mkdir -p storage/framework/cache \
     && mkdir -p bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
-
-RUN composer install --no-interaction --no-progress --optimize-autoloader
-
-RUN npm install && npm run prod
+    && chmod -R 775 storage bootstrap/cache \
+    && composer install --no-interaction --no-progress --optimize-autoloader \
+    && npm install && npm run prod
 
 EXPOSE 8000
 
