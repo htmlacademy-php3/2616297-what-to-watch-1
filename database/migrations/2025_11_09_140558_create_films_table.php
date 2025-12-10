@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\FilmStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -28,6 +30,7 @@ return new class extends Migration
             $table->integer('run_time')->nullable();
             $table->integer('released')->nullable();
             $table->string('imdb_id', 255);
+            $table->boolean('is_promo')->default(false)->nullable();
             $table->enum('status', FilmStatus::values())->default(FilmStatus::READY->value);
             $table->timestamps();
         });

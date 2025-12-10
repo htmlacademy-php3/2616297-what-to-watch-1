@@ -8,7 +8,7 @@
         "php": "8.4.*",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel-lang/common": "^6.7",
-        "laravel/framework": "12.10.0",
+        "laravel/framework": "^12.1.1",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.5",
         "psr/http-client": "1.0.3",
@@ -17,14 +17,16 @@
         "symfony/psr-http-message-bridge": "^7.4"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper": "^3.6",
+        "psalm/plugin-laravel": "v3.0.4",
+        "barryvdh/laravel-ide-helper": "~3.5.4",
         "fakerphp/faker": "^1.9.1",
         "laravel-lang/lang": "*",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
         "phpunit/phpunit": "^11.0",
-        "spatie/laravel-ignition": "^2.0"
+        "spatie/laravel-ignition": "^2.0",
+        "vimeo/psalm": "^6.13"
     },
     "autoload": {
         "psr-4": {
@@ -51,6 +53,9 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "psalm" : [
+            "@php vendor/bin/psalm --show-info=true"
         ]
     },
     "extra": {

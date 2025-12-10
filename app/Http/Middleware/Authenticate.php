@@ -1,10 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Override;
 
-class Authenticate extends Middleware
+/**
+ * @psalm-suppress UnusedClass
+ */
+final class Authenticate extends Middleware
 {
     /**
      * Get the path the user should be redirected to when they are not authenticated.
@@ -12,6 +18,7 @@ class Authenticate extends Middleware
      * @param  \Illuminate\Http\Request  $request
      * @return string|null
      */
+    #[Override]
     protected function redirectTo($request)
     {
         if (! $request->expectsJson()) {

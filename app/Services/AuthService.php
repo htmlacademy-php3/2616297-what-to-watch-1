@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Data\LoginUserData;
@@ -10,14 +12,30 @@ use App\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\NewAccessToken;
 
-readonly class AuthService
+/**
+ * Сервис для аутентификации пользователя
+ */
+final readonly class AuthService
 {
+    /**
+     * Внедряет зависимости
+     *
+     * @param UserRepositoryInterface $userRepository
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function __construct(
         private UserRepositoryInterface $userRepository,
     ) {
     }
 
-    public function login(LoginUserData $DTO): NewAccessToken
+    /**
+     * Аутентифицирует пользователя
+     *
+     * @param LoginUserData $DTO
+     * @return NewAccessToken|null
+     * @throws InvalidCredentialsException
+     */
+    public function login(LoginUserData $DTO): ?NewAccessToken
     {
         if (false === Auth::attempt(
                 [
@@ -28,15 +46,21 @@ readonly class AuthService
             throw new InvalidCredentialsException();
         }
 
-        return Auth::user()->createToken(env('APP_NAME', 'Laravel'));
+        return Auth::user()?->createToken(config('app.name', 'Laravel'));
     }
 
-    public function register(RegisterUserData $DTO): NewAccessToken
+    /**
+     * Регистрирует пользователя
+     *
+     * @param RegisterUserData $DTO
+     * @return NewAccessToken|null
+     */
+    public function register(RegisterUserData $DTO): ?NewAccessToken
     {
         $id = $this->userRepository->create(
             $DTO
         );
 
-        return User::find($id)->createToken(env('APP_NAME', 'Laravel'));
+        return User::find($id)?->createToken(config('app.name', 'Laravel'));
     }
 }

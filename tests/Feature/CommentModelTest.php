@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
 use App\Models\Comment;
@@ -18,7 +20,7 @@ class CommentModelTest extends TestCase
         $withoutUserAttached = Comment::factory()
             ->for(
                 Film::factory()
-                    ->for(Genre::factory())
+                    ->has(Genre::factory())
             );
 
         $attachedUser = User::factory()->create();

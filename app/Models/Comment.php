@@ -1,10 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
+use Database\Factories\CommentFactory;
+use Database\Factories\FilmFactory;
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $film_id
@@ -14,28 +21,32 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property null|int $comment_id
  * @property int $id
  * @property int|null $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Film $film
- * @property-read \App\Models\User|null $user
- * @method static \Database\Factories\CommentFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereCommentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereFilmId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereRating($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereText($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereUserId($value)
- * @mixin \Eloquent
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Film $film
+ * @property-read User|null $user
+ * @method static CommentFactory factory($count = null, $state = [])
+ * @method static Builder<Comment> newModelQuery()
+ * @method static Builder<Comment> newQuery()
+ * @method static Builder<Comment> query()
+ * @method static Builder<Comment> whereCommentId($value)
+ * @method static Builder<Comment> whereCreatedAt($value)
+ * @method static Builder<Comment> whereFilmId($value)
+ * @method static Builder<Comment> whereId($value)
+ * @method static Builder<Comment> whereRating($value)
+ * @method static Builder<Comment> whereText($value)
+ * final
+ * @method static Builder<Comment> whereUpdatedAt($value)
+ * @method static Builder<Comment> whereUserId($value)
  */
-class Comment extends Model
+final class Comment extends Model
 {
+    /** @use HasFactory<FilmFactory> */
     use HasFactory;
 
+    /**
+     * @var array<int, string>
+     */
     protected $fillable = [
         'film_id',
         'text',
@@ -44,16 +55,30 @@ class Comment extends Model
         'user_id'
     ];
 
+    /**
+     * @return BelongsTo
+     *
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function film(): BelongsTo
     {
         return $this->belongsTo(Film::class);
     }
 
+    /**
+     * @return BelongsTo
+     *
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return string
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getAuthorNameAttribute(): string
     {
         return null !== $this->user ? $this->user->name : 'Аноним';

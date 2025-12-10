@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
-use App\IMDB\IMDBRepository;
+use App\Enums\FilmStatus;
 use App\Jobs\ProcessPendingFilm;
 use App\Models\Comment;
 use App\Models\Film;
@@ -11,10 +13,8 @@ use App\Models\User;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Testing\Fluent\AssertableJson;
-use Mockery;
-use Mockery\MockInterface;
-use Queue;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
@@ -24,9 +24,7 @@ class FilmResourceTest extends TestCase
 
     public function createModeratorRoleUser(): void
     {
-        $this->seed(
-            RoleSeeder::class,
-        );
+        $this->seed(RoleSeeder::class);
 
         $moderatorUser = User::factory()->afterCreating(function ($user) {
             $user->assignRole('moderator');
@@ -35,13 +33,10 @@ class FilmResourceTest extends TestCase
         $this->actingAs($moderatorUser);
     }
 
-    /**
-     * A basic feature test example.
-     */
     public function testIndexRouteReturnsCorrectResponse(): void
     {
         Film::factory(10)
-            ->for(Genre::factory())
+            ->has(Genre::factory()->count(2))
             ->has(Comment::factory()->count(3))
             ->create();
 
@@ -54,6 +49,7 @@ class FilmResourceTest extends TestCase
                         'title',
                         'preview_image',
                         'preview_video_link',
+                        'genres',
                     ]
                 ],
                 'first_page_url',
@@ -68,7 +64,7 @@ class FilmResourceTest extends TestCase
     public function testAssertPaginationWorks(): void
     {
         Film::factory(10)
-            ->for(Genre::factory())
+            ->has(Genre::factory())
             ->has(Comment::factory()->count(3))
             ->create();
 
@@ -79,30 +75,35 @@ class FilmResourceTest extends TestCase
 
     public function testGenreParameterFiltersCorrectly(): void
     {
-        Genre::factory()
-            ->count(10)->state(
-                new Sequence(
-                    ['name' => 'Horror'],
-                    ['name' => 'Romance']
-                )
-            )->has(
-                Film::factory()
-            )->create();
+        $horror = Genre::factory()->create(['name' => 'Horror']);
+        $romance = Genre::factory()->create(['name' => 'Romance']);
+
+        Film::factory()->count(5)
+            ->hasAttached($horror)
+            ->create();
+
+        Film::factory()->count(5)
+            ->hasAttached($romance)
+            ->create();
 
         $this->json('GET', '/api/films?genre=Horror')
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonCount(5, 'data');
+            ->assertJsonCount(5, 'data')
+            ->assertJson(fn(AssertableJson $json) => $json->has('data', 5)
+                ->has('data.0.genres', fn($json) => $json->where('0', 'Horror')->etc())
+                ->etc()
+            );
     }
 
     public function testModeratorCanFilterFilmStatus(): void
     {
         Film::factory(10)
-            ->for(Genre::factory())
+            ->has(Genre::factory())
             ->has(Comment::factory()->count(3))
             ->state(
                 new Sequence(
-                    ['status' => 'ready'],
-                    ['status' => 'pending']
+                    ['status' => FilmStatus::READY->value],
+                    ['status' => FilmStatus::PENDING->value]
                 )
             )
             ->create();
@@ -126,12 +127,12 @@ class FilmResourceTest extends TestCase
     public function testGuestUserCannotFilterPendingFilms(): void
     {
         Film::factory(10)
-            ->for(Genre::factory())
+            ->has(Genre::factory())
             ->has(Comment::factory()->count(3))
             ->state(
                 new Sequence(
-                    ['status' => 'ready'],
-                    ['status' => 'pending']
+                    ['status' => FilmStatus::READY->value],
+                    ['status' => FilmStatus::PENDING->value]
                 )
             )
             ->create();
@@ -153,35 +154,19 @@ class FilmResourceTest extends TestCase
     public function testOrderBySorting(): void
     {
         Film::factory()
-            ->for(Genre::factory())
-            ->has(
-                Comment::factory()->state(
-                    ['rating' => 10.0]
-                )->count(3)
-            )
-            ->create(
-                ['title' => 'Highest rated']
-            );
+            ->has(Genre::factory())
+            ->has(Comment::factory()->state(['rating' => 10.0])->count(3))
+            ->create(['title' => 'Highest rated']);
 
         Film::factory()
-            ->for(Genre::factory())
-            ->has(
-                Comment::factory()->state(
-                    ['rating' => 9.0]
-                )->count(3)
-            )
+            ->has(Genre::factory())
+            ->has(Comment::factory()->state(['rating' => 9.0])->count(3))
             ->create();
 
         Film::factory()
-            ->for(Genre::factory())
-            ->has(
-                Comment::factory()->state(
-                    ['rating' => 8.0]
-                )->count(3)
-            )
-            ->create(
-                ['title' => 'Lowest rated']
-            );
+            ->has(Genre::factory())
+            ->has(Comment::factory()->state(['rating' => 8.0])->count(3))
+            ->create(['title' => 'Lowest rated']);
 
         $this->json('GET', '/api/films?order_by=rating&order_to=desc')
             ->assertStatus(Response::HTTP_OK)
@@ -196,46 +181,45 @@ class FilmResourceTest extends TestCase
 
     public function testModelRequestReturnsCorrectValue(): void
     {
-        Film::factory(10)
-            ->for(Genre::factory())
-            ->state(
-                new Sequence(
-                    fn(Sequence $sequence) => ['title' => 'Title ' . $sequence->index + 1],
-                )
-            )
-            ->create();
+        $genre = Genre::factory()->create(['name' => 'Thriller']);
 
-        $response = $this->getJson('/api/films/1');
+        $film = Film::factory()
+            ->hasAttached($genre)
+            ->create(['title' => 'The Test Film']);
+
+        $response = $this->getJson("/api/films/{$film->id}");
 
         $response
-            ->assertJson(fn(AssertableJson $json) => $json->where('id', 1)
-                ->where('title', 'Title 1')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJson(fn(AssertableJson $json) => $json
+                ->where('id', $film->id)
+                ->where('title', 'The Test Film')
+                ->where('genres.0', 'Thriller')
                 ->etc()
             );
     }
 
     public function testReturnsCorrectSimilarFilms(): void
     {
-        Genre::factory()
-            ->count(10)->state(
-                new Sequence(
-                    ['name' => 'Horror'],
-                    ['name' => 'Romance']
-                )
-            )->has(
-                Film::factory()
-            )->create();
+        $sharedGenre = Genre::factory()->create(['name' => 'Sci-Fi']);
+        $otherGenre = Genre::factory()->create(['name' => 'Comedy']);
 
-        $this->json('GET', '/api/films/1/similar')
+        $film = Film::factory()->hasAttached($sharedGenre)->create();
+
+        Film::factory()->count(4)->hasAttached($sharedGenre)->create();
+
+        Film::factory()->count(5)->hasAttached($otherGenre)->create();
+
+        $this->json('GET', "/api/films/{$film->id}/similar")
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(4, 'data')
             ->assertJson(fn(AssertableJson $json) => $json
-                ->has('data', 4)
                 ->has(
                     'data',
                     fn(AssertableJson $json) => $json->each(
                         fn(AssertableJson $json) => $json
-                            ->where('genre_name', 'Horror')
-                            ->whereNot('id', 1)
+                            ->whereContains('genres', 'Sci-Fi')
+                            ->whereNot('id', $film->id)
                             ->etc()
                     )
                 )
@@ -252,7 +236,6 @@ class FilmResourceTest extends TestCase
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
 
         $user = User::factory()->create();
-
         $this->actingAs($user);
 
         $this->json('POST', '/api/films/')
@@ -265,20 +248,14 @@ class FilmResourceTest extends TestCase
     public function testModeratorCanPublishFilm(): void
     {
         Queue::fake();
-
         $this->createModeratorRoleUser();
 
-        $this->json(
-            'POST',
-            '/api/films/',
-            [
-                'imdb_id' => 'tt0482571'
-            ]
-        )
+        $this->json('POST', '/api/films/', ['imdb_id' => 'tt0482571'])
             ->assertStatus(Response::HTTP_CREATED);
 
         $this->assertDatabaseHas('films', [
             'imdb_id' => 'tt0482571',
+            'status' => FilmStatus::PENDING->value
         ]);
 
         Queue::assertPushed(ProcessPendingFilm::class);
@@ -286,77 +263,123 @@ class FilmResourceTest extends TestCase
 
     public function testModeratorCanEditFilmInfo(): void
     {
-        Film::factory(1)
-            ->for(Genre::factory())
-            ->state(
-                [
-                    'title' => 'Prestige',
-                    'imdb_id' => 'tt0482571'
-                ]
-            )
-            ->create();
-
+        $film = Film::factory()->create(['imdb_id' => 'tt0482571']);
         $this->createModeratorRoleUser();
 
         $this->json(
-            'POST',
-            '/api/films/1',
+            'PATCH',
+            "/api/films/{$film->id}",
             [
-                'description' => 'Rival 19th-century magicians engage in a bitter battle for trade secrets.',
+                'imdb_id' => 'tt0482571',
+                'description' => 'New description.',
+                'status' => FilmStatus::READY->value,
+                'name' => 'The Prestige',
+                'genre' => ['Drama', 'Mystery'] // Send array of strings
             ]
         )
             ->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertDatabaseHas('films', [
-            'description' => 'Rival 19th-century magicians engage in a bitter battle for trade secrets.',
+            'id' => $film->id,
+            'description' => 'New description.',
+            'title' => 'The Prestige'
         ]);
+
+        static::assertTrue(
+            $film->fresh()->genres->pluck('name')->contains('Drama')
+        );
     }
 
     public function testUserCanSetFilmAsFavorite(): void
     {
-        Genre::factory()
-            ->count(10)
-            ->has(
-                Film::factory()
-            )->create();
-
+        $film = Film::factory()->create();
         $user = User::factory()->create();
 
         $this->actingAs($user);
 
-        $this->json(
-            'POST',
-            '/api/films/2/favorite',
-        )
+        $this->json('POST', '/api/films/9999/favorite')
             ->assertStatus(Response::HTTP_NOT_FOUND);
 
-        $this->json(
-            'POST',
-            '/api/films/1/favorite',
-        )
-            ->assertStatus(Response::HTTP_NO_CONTENT);
+        $this->json('POST', "/api/films/{$film->id}/favorite")
+            ->assertStatus(Response::HTTP_CREATED);
 
         $this->assertDatabaseHas('favorite_films', [
-            'user_id' => '1',
-            'film_id' => '1',
+            'user_id' => $user->id,
+            'film_id' => $film->id,
         ]);
 
-        $this->json(
-            'POST',
-            '/api/films/1/favorite',
-        )
+        $this->json('POST', "/api/films/{$film->id}/favorite")
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-        $this->json(
-            'DELETE',
-            '/api/films/2/favorite',
-        )
-            ->assertStatus(Response::HTTP_NOT_FOUND);
-
-        $this->json(
-            'DELETE',
-            '/api/films/1/favorite',
-        )
+        $this->json('DELETE', "/api/films/{$film->id}/favorite")
             ->assertStatus(Response::HTTP_NO_CONTENT);
+    }
+
+    public function testUserCanGetHisFavoriteFilms(): void
+    {
+        $user = User::factory()->create();
+        $favoriteFilms = Film::factory()->count(2)
+            ->state(['status' => FilmStatus::READY->value])
+            ->create();
+
+        $user->films()->attach($favoriteFilms->pluck('id'));
+
+        $this->actingAs($user);
+
+        $this->json('GET', '/api/favorite')
+            ->assertOk()
+            ->assertJsonCount(2, 'data');
+    }
+
+    public function testModeratorCanUpdateFilm(): void
+    {
+        $this->createModeratorRoleUser();
+
+        $film = Film::factory()->create([
+            'imdb_id' => 'tt1234567',
+            'status' => FilmStatus::ON_MODERATION,
+        ]);
+
+        $response = $this->json('PATCH', "/api/films/$film->id", [
+            'name' => 'The Grand Budapest Hotel',
+            'poster_image' => 'img/poster.jpg',
+            'preview_image' => 'img/preview.jpg',
+            'background_image' => 'img/bg.jpg',
+            'background_color' => '#ffffff',
+            'video_link' => 'https://example.com/video.mp4',
+            'preview_video_link' => 'https://example.com/preview.mp4',
+            'description' => 'Description...',
+            'director' => 'Wes Anderson',
+            'starring' => ['Bill Murray', 'Edward Norton'],
+            'genre' => ['Comedy', 'Drama'],
+            'run_time' => 99,
+            'released' => 2014,
+            'status' => 'ready',
+        ]);
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseHas('films', [
+            'id' => $film->id,
+            'title' => 'The Grand Budapest Hotel',
+            'status' => 'ready',
+        ]);
+
+        $this->assertDatabaseHas('genres', ['name' => 'Comedy']);
+        $this->assertDatabaseHas('genres', ['name' => 'Drama']);
+
+        $filmGenres = $film->fresh()->genres->pluck('name')->toArray();
+        $this->assertContains('Comedy', $filmGenres);
+        $this->assertContains('Drama', $filmGenres);
+    }
+
+    public function testUpdateNonExistentFilmReturns404(): void
+    {
+        $this->createModeratorRoleUser();
+
+        $this->json('PATCH', '/api/films/999999', [
+            'name' => 'Non Existent',
+            'status' => FilmStatus::READY->value,
+        ])->assertNotFound();
     }
 }

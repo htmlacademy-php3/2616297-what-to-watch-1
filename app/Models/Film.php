@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Database\Factories\FilmFactory;
@@ -8,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
@@ -24,7 +25,6 @@ use Illuminate\Support\Carbon;
  * @property null|string $description
  * @property null|string $director
  * @property null|string $starring
- * @property int $genre_id
  * @property null|int $run_time
  * @property null|int $released
  * @property string $imdb_id
@@ -61,10 +61,16 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Film whereTitle($value)
  * @method static Builder<static>|Film whereUpdatedAt($value)
  * @method static Builder<static>|Film whereVideoLink($value)
+ * @property int|null $is_promo
+ * @property-read Collection<int, Genre> $genres
+ * @property-read int|null $genres_count
+ * @method static Builder<static>|Film whereIsPromo($value)
  * @mixin Eloquent
+ * @mixin Builder
  */
-class Film extends Model
+final class Film extends Model
 {
+    /** @use HasFactory<FilmFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -78,32 +84,52 @@ class Film extends Model
         'description',
         'director',
         'starring',
-        'genre_id',
         'run_time',
         'released',
         'imdb_id',
         'status',
     ];
 
-    public function genre(): BelongsTo
+    /**
+     * @return BelongsToMany
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public function genres(): BelongsToMany
     {
-        return $this->belongsTo(Genre::class);
+        return $this->belongsToMany(Genre::class, 'film_genre');
     }
 
+    /**
+     * @return BelongsToMany
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'favorite_films');
     }
 
+    /**
+     * @return HasMany
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
+    /**
+     * Возвращает рейтинг исходя из отзывов о фильме
+     *
+     * @return float
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getRatingAttribute(): float
     {
+        /** @var float|null $avg */
+        $avg = $this->comments->avg('rating');
+
         return round(
-            $this->comments->avg('rating'),
+            $avg ?? 0.0,
             1
         );
     }

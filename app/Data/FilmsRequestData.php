@@ -1,15 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Data;
 
-use App\Enums\FilmStatus;
-use Illuminate\Validation\Rule;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Support\Validation\ValidationContext;
 
-class FilmsRequestData extends Data
+/**
+ * Data-объект с данными из запроса на получение списка фильмов
+ *
+ * @psalm-suppress PossiblyUnusedProperty
+ */
+final class FilmsRequestData extends Data
 {
+    /**
+     * Список параметров запроса
+     *
+     * @param int|null $page
+     * @param string|null $genre
+     * @param string|null $status
+     * @param string|null $orderBy
+     * @param string|null $orderTo
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function __construct(
         public ?int $page = null,
         public ?string $genre = null,
@@ -21,14 +35,5 @@ class FilmsRequestData extends Data
     ) {
     }
 
-    public static function rules(ValidationContext $context): array
-    {
-        return [
-            'page' => 'integer:strict|min:1',
-            'genre' => 'string|exists:genres,name',
-            'status' => [Rule::in(FilmStatus::values())],
-            'order_by' => [Rule::in(['rating', 'released'])],
-            'order_to' => [Rule::in(['asc', 'desc'])],
-        ];
-    }
+
 }

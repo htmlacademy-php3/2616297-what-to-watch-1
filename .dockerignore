@@ -1,0 +1,12 @@
+.git
+.idea
+.vscode
+node_modules
+vendor
+storage
+bootstrap/cache
+public/build
+public/hot
+.env
+Dockerfile
+docker-compose.yml

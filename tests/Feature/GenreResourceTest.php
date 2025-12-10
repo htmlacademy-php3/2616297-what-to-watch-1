@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
 use App\Models\Film;
@@ -10,10 +12,18 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
+/**
+ * Класс для тестирования ресурса жанров
+ */
 class GenreResourceTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Создаёт пользователя с ролью модератора
+     *
+     * @return void
+     */
     public function createModeratorRoleUser(): void
     {
         $this->seed(
@@ -27,11 +37,16 @@ class GenreResourceTest extends TestCase
         $this->actingAs($moderatorUser);
     }
 
+    /**
+     * Проверят что жанры возвращаются правильно
+     *
+     * @return void
+     */
     public function testGenresReturnsCorrectly(): void
     {
         Genre::factory()
             ->count(10)
-            ->has(
+            ->hasAttached(
                 Film::factory()
             )->create();
 
@@ -48,11 +63,16 @@ class GenreResourceTest extends TestCase
             ->assertJsonCount(10, 'data');
     }
 
+    /**
+     * Проверяет что модератор может редактировать жанры
+     *
+     * @return void
+     */
     public function testModeratorCanEditGenre(): void
     {
         Genre::factory()
             ->count(10)
-            ->has(
+            ->hasAttached(
                 Film::factory()
             )->create();
 

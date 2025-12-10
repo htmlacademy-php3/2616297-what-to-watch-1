@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -7,8 +9,15 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
-class RoleSeeder extends Seeder
+/**
+ * Заполняет базу данных данными о ролях и разрешениями
+ */
+final class RoleSeeder extends Seeder
 {
+    /**
+     * @return void
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function run(): void
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();

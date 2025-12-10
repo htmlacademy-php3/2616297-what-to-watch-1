@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Data;
 
 use Spatie\LaravelData\Attributes\WithCast;
@@ -7,8 +9,23 @@ use Spatie\LaravelData\Attributes\WithoutValidation;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Support\Validation\ValidationContext;
 
-class RegisterUserData extends Data
+/**
+ * Data-объект с данными из запроса на регистрацию нового пользователя
+ *
+ * @psalm-suppress PossiblyUnusedProperty
+ */
+final class RegisterUserData extends Data
 {
+    /**
+     * Список параметров запроса
+     *
+     * @param string $email
+     * @param string $password
+     * @param string $name
+     * @param string|null $file
+     *
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function __construct(
         public string $email,
         public string $password,
@@ -19,7 +36,19 @@ class RegisterUserData extends Data
     ) {
     }
 
-    public static function rules(ValidationContext $context): array
+    /**
+     * Список правил валидации параметров запроса
+     *
+     * @method static array rules(?ValidationContext $context = null)
+     * @method static array messages(...$args)
+     * @method static array attributes(...$args)
+     * @method static bool stopOnFirstFailure()
+     * @method static string redirect()
+     * @method static string redirectRoute()
+     * @method static string errorBag()
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public static function rules(): array
     {
         return [
             'email' => ['required', 'unique:\App\Models\User'],
