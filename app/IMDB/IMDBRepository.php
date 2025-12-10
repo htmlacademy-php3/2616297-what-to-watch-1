@@ -9,17 +9,30 @@ use App\DTO\IMDBMovieDTO;
 use Exception;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Log;
+use Override;
 use Psr\Http\Client\ClientInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class IMDBRepository implements IMDBRepositoryInterface
+/**
+ * Реализация репозитория для работы с данными о фильмах из IMDB API
+ */
+readonly final class IMDBRepository implements IMDBRepositoryInterface
 {
+    /**
+     * @param ClientInterface $client
+     *
+     */
     public function __construct(
         private ClientInterface $client,
     ) {
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
     public function findById(int $id): ?IMDBMovieDTO
     {
         $imdbId = Film::findOrFail($id)->imdb_id;
@@ -39,17 +52,17 @@ class IMDBRepository implements IMDBRepositoryInterface
                 throw new Exception('Response is not an object, therefore cannot used to retrieve data');
             }
         } catch (Throwable $e) {
-            Log::info("Error getting film info from IMDB API: message {$e->getMessage()}", );
+            Log::info("Error getting film info from IMDB API: message {$e->getMessage()}");
 
             return null;
         }
 
         $filmTitle = $data->primaryTitle ?? null;
 
-        $genre = null;
+        $genres = [];
 
         if (isset($data->genres) && is_array($data->genres)) {
-            $genre = $data->genres[0] ?? null;
+            $genres = $data->genres;
         }
 
         $startYear = $data->startYear ?? null;
@@ -71,7 +84,7 @@ class IMDBRepository implements IMDBRepositoryInterface
 
         return new IMDBMovieDTO(
             $filmTitle,
-            $genre,
+            $genres,
             $startYear,
             $description,
             $director,

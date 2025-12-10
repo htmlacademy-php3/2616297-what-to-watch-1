@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Exceptions\InvalidCredentialsException;
 use App\Http\Responses\ErrorResponse;
+use App\Http\Responses\NotFoundErrorResponse;
 use App\Http\Responses\ValidationErrorResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -44,9 +47,8 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (NotFoundHttpException $e) {
-            return new ErrorResponse(
-                __('http-statuses.404'),
-                Response::HTTP_NOT_FOUND,
+            return new NotFoundErrorResponse(
+                __('http-statuses.404')
             );
         });
 

@@ -1,14 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
-use App\Models\Genre;
+use App\Models\Film;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Storage;
+use Override;
 
-class FilmFactory extends Factory
+/**
+ * Генерирует тестовые данные фильмов
+ *
+ * @extends Factory<Film>
+ * @psalm-suppress UnusedClass
+ */
+final class FilmFactory extends Factory
 {
+    /** @var class-string<Film> */
+    protected $model = Film::class;
 
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
     public function definition(): array
     {
         $starring = [];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
 use App\Models\Comment;
@@ -8,18 +10,22 @@ use App\Models\Genre;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class FilmModelTest extends TestCase
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-suppress InvalidArgument
+ */
+final class FilmModelTest extends TestCase
 {
     use RefreshDatabase;
 
     public function testReturnsCorrectRatingValue(): void
     {
         $film = Film::factory()
-            ->for(Genre::factory())
+            ->has(Genre::factory())
             ->has(Comment::factory()->count(3))
             ->create();
 
-        $avgRating = round($film->comments->avg('rating'), 1);
+        $avgRating = round($film->comments->avg('rating') ?? 0.0, 1);
 
         $this->assertEquals($avgRating, $film->rating);
     }

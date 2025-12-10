@@ -1,5 +1,6 @@
 {
     "/js/app.js": "/js/app.js",
+    "/Readme.md": "/Readme.md",
     "/css/app.css": "/css/app.css",
     "/css/main.css": "/css/main.css",
     "/css/main.min.css": "/css/main.min.css",
@@ -35,8 +36,8 @@
     "/img/what-we-do-in-the-shadows.jpg": "/img/what-we-do-in-the-shadows.jpg",
     "/index.html": "/index.html",
     "/index.php": "/index.php",
+    "/js/app.js.LICENSE.txt": "/js/app.js.LICENSE.txt",
     "/mix-manifest.json": "/mix-manifest.json",
-    "/Readme.md": "/Readme.md",
     "/resources/js/app.js": "/resources/js/app.js",
     "/robots.txt": "/robots.txt"
 }

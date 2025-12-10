@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
 use App\Models\Comment;
@@ -9,7 +11,11 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class CommentModelTest extends TestCase
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-suppress InvalidArgument
+ */
+final class CommentModelTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -18,9 +24,10 @@ class CommentModelTest extends TestCase
         $withoutUserAttached = Comment::factory()
             ->for(
                 Film::factory()
-                    ->for(Genre::factory())
+                    ->has(Genre::factory())
             );
 
+        /** @var User $attachedUser */
         $attachedUser = User::factory()->create();
 
         $withUserAttached = $withoutUserAttached->for($attachedUser);

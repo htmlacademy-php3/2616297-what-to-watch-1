@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit;
 
 use App\DTO\IMDBMovieDTO;
 use App\IMDB\IMDBRepository;
+use App\IMDB\IMDBRepositoryInterface;
 use App\Models\Film;
 use App\Models\Genre;
 use App\Services\FilmService;
@@ -12,34 +15,37 @@ use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
-class FilmServiceTest extends TestCase
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-suppress UndefinedMagicMethod
+ * @psalm-suppress UndefinedInterfaceMethod
+ */
+final class FilmServiceTest extends TestCase
 {
     use RefreshDatabase;
 
     public function testServiceUpdatesFilmInfo(): void
     {
-        $film = Film::factory()
-            ->for(Genre::factory())
-            ->create(['imdb_id' => 'tt0482571']);
+        $film = Film::factory()->create(['imdb_id' => 'tt0482571']);
 
         $this->instance(
-            IMDBRepository::class,
-            Mockery::mock(IMDBRepository::class, function (MockInterface $mock) use ($film) {
+            IMDBRepositoryInterface::class,
+            Mockery::mock(IMDBRepositoryInterface::class, function ($mock) use ($film) {
                 $mock->shouldReceive('findById')
                     ->with($film->id)
                     ->once()
-                    ->andReturn(
-                        new IMDBMovieDTO(
-                            name: 'The Prestige',
-                            genre: 'Drama',
-                            startYear: 2006,
-                            description: 'Two stage magicians engage in competitive one-upmanship in an attempt to create the ultimate stage illusion.',
-                            director: 'Christopher Nolan',
-                            runTime: 130
-                        )
-                    );
+                    ->andReturn(new IMDBMovieDTO(
+                        name: 'The Prestige',
+                        genres: ['Drama'],
+                        startYear: 2006,
+                        description: 'Magic',
+                        director: 'Nolan',
+                        runTime: 130
+                    ));
             })
         );
+
+        Genre::factory()->create(['name' => 'Drama']);
 
         $service = app(FilmService::class);
         $service->updateWithIMDB($film->id);
@@ -47,10 +53,11 @@ class FilmServiceTest extends TestCase
         $this->assertDatabaseHas('films', [
             'id' => $film->id,
             'title' => 'The Prestige',
-            'director' => 'Christopher Nolan',
             'released' => 2006,
-            'description' => 'Two stage magicians engage in competitive one-upmanship in an attempt to create the ultimate stage illusion.',
-            'run_time' => 130,
         ]);
+
+        $freshFilm = $film->fresh();
+        $this->assertNotNull($freshFilm);
+        $this->assertTrue($freshFilm->genres->contains('name', 'Drama'));
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\FilmController;
