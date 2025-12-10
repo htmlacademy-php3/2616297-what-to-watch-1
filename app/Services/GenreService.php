@@ -18,7 +18,6 @@ readonly final class GenreService
      * Внедряет зависимости
      *
      * @param GenreRepositoryInterface $genreRepository
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private GenreRepositoryInterface $genreRepository,

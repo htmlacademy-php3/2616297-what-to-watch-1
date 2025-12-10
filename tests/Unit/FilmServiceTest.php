@@ -15,7 +15,12 @@ use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
-class FilmServiceTest extends TestCase
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-suppress UndefinedMagicMethod
+ * @psalm-suppress UndefinedInterfaceMethod
+ */
+final class FilmServiceTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -42,7 +47,6 @@ class FilmServiceTest extends TestCase
 
         Genre::factory()->create(['name' => 'Drama']);
 
-        /** @var FilmService $service */
         $service = app(FilmService::class);
         $service->updateWithIMDB($film->id);
 
@@ -52,6 +56,8 @@ class FilmServiceTest extends TestCase
             'released' => 2006,
         ]);
 
-        $this->assertTrue($film->fresh()->genres->contains('name', 'Drama'));
+        $freshFilm = $film->fresh();
+        $this->assertNotNull($freshFilm);
+        $this->assertTrue($freshFilm->genres->contains('name', 'Drama'));
     }
 }

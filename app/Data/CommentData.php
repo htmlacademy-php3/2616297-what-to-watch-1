@@ -13,8 +13,6 @@ use Spatie\LaravelData\Support\Validation\ValidationContext;
 /**
  * Data-объект для создания комментария
  *
- * @psalm-suppress PossiblyUnusedMethod
- * @psalm-suppress PossiblyUnusedProperty
  */
 final class CommentData extends Data
 {
@@ -27,7 +25,6 @@ final class CommentData extends Data
      * @param int|null $user_id
      * @param int|null $comment_id
      *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         public string $text,
@@ -51,8 +48,6 @@ final class CommentData extends Data
      * @method static string redirect()
      * @method static string redirectRoute()
      * @method static string errorBag()
-     *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public static function rules(): array
     {

@@ -11,8 +11,6 @@ use Spatie\LaravelData\Support\Validation\ValidationContext;
 /**
  * Data-объект с данными из запроса на добавление нового фильма
  *
- * @psalm-suppress PossiblyUnusedMethod
- * @psalm-suppress PossiblyUnusedProperty
  */
 final class FilmCreateData extends Data
 {
@@ -20,7 +18,6 @@ final class FilmCreateData extends Data
      * Список параметров запроса
      *
      * @param string $imdbId
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         #[MapName('imdb_id')]
@@ -38,7 +35,6 @@ final class FilmCreateData extends Data
      * @method static string redirect()
      * @method static string redirectRoute()
      * @method static string errorBag()
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public static function rules(): array
     {

@@ -14,8 +14,11 @@ use Tests\TestCase;
 
 /**
  * Класс для тестирования ресурса жанров
+ *
+ * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-suppress InvalidArgument
  */
-class GenreResourceTest extends TestCase
+final class GenreResourceTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -30,6 +33,7 @@ class GenreResourceTest extends TestCase
             RoleSeeder::class,
         );
 
+        /** @var User $moderatorUser */
         $moderatorUser = User::factory()->afterCreating(function ($user) {
             $user->assignRole('moderator');
         })->create();

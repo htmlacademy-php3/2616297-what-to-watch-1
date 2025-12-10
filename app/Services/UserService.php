@@ -17,7 +17,6 @@ readonly final class UserService
      * Внедряет зависимости
      *
      * @param UserRepositoryInterface $userRepository
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private UserRepositoryInterface $userRepository,

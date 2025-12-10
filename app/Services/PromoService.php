@@ -16,7 +16,6 @@ readonly final class PromoService
      * Внедряет зависимости
      *
      * @param PromoRepositoryInterface $promoRepository
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private PromoRepositoryInterface $promoRepository,

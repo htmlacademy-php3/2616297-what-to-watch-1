@@ -19,7 +19,6 @@ readonly final class CommentService
      * Внедряет зависимости
      *
      * @param CommentRepositoryInterface $commentRepository
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private CommentRepositoryInterface $commentRepository,

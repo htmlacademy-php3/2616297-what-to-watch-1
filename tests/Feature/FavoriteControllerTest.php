@@ -12,7 +12,10 @@ use Illuminate\Testing\Fluent\AssertableJson;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
-class FavoriteControllerTest extends TestCase
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
+final class FavoriteControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -22,6 +25,7 @@ class FavoriteControllerTest extends TestCase
             RoleSeeder::class,
         );
 
+        /** @var User $moderatorUser */
         $moderatorUser = User::factory()->afterCreating(function ($user) {
             $user->assignRole('moderator');
         })->create();
@@ -36,7 +40,7 @@ class FavoriteControllerTest extends TestCase
         $user = $this->authenticateUser();
         $film = Film::factory()->create();
 
-        $response = $this->postJson("/api/films/{$film->id}/favorite")
+        $this->postJson("/api/films/{$film->id}/favorite")
             ->assertStatus(Response::HTTP_CREATED);
 
         $this->assertDatabaseHas('favorite_films', [
@@ -50,8 +54,8 @@ class FavoriteControllerTest extends TestCase
         $this->authenticateUser();
         $nonExistentFilmId = 99999;
 
-        $response = $this->postJson("/api/films/{$nonExistentFilmId}/favorite")
-                ->assertStatus(Response::HTTP_NOT_FOUND);
+        $this->postJson("/api/films/{$nonExistentFilmId}/favorite")
+            ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     public function testCannotAddDuplicateFilmToFavorites(): void

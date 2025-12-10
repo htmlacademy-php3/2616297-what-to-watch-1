@@ -144,7 +144,6 @@ final class User extends Authenticatable
 
     /**
      * @return BelongsToMany
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function films(): BelongsToMany
     {
@@ -153,7 +152,6 @@ final class User extends Authenticatable
 
     /**
      * @return HasMany
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function comments(): HasMany
     {

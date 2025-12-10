@@ -18,7 +18,11 @@ use Illuminate\Testing\Fluent\AssertableJson;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
-class FilmResourceTest extends TestCase
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-suppress InvalidArgument
+ */
+final class FilmResourceTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -26,6 +30,7 @@ class FilmResourceTest extends TestCase
     {
         $this->seed(RoleSeeder::class);
 
+        /** @var User $moderatorUser */
         $moderatorUser = User::factory()->afterCreating(function ($user) {
             $user->assignRole('moderator');
         })->create();
@@ -90,7 +95,7 @@ class FilmResourceTest extends TestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(5, 'data')
             ->assertJson(fn(AssertableJson $json) => $json->has('data', 5)
-                ->has('data.0.genres', fn($json) => $json->where('0', 'Horror')->etc())
+                ->has('data.0.genres', fn(AssertableJson $json) => $json->where('0', 'Horror')->etc())
                 ->etc()
             );
     }
@@ -235,6 +240,7 @@ class FilmResourceTest extends TestCase
         $this->json('PATCH', '/api/films/1')
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
 
+        /** @var User $user */
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -285,14 +291,17 @@ class FilmResourceTest extends TestCase
             'title' => 'The Prestige'
         ]);
 
+        $freshFilm = $film->fresh();
+        $this->assertNotNull($freshFilm);
         static::assertTrue(
-            $film->fresh()->genres->pluck('name')->contains('Drama')
+            $freshFilm->genres->pluck('name')->contains('Drama')
         );
     }
 
     public function testUserCanSetFilmAsFavorite(): void
     {
         $film = Film::factory()->create();
+        /** @var User $user */
         $user = User::factory()->create();
 
         $this->actingAs($user);
@@ -317,6 +326,7 @@ class FilmResourceTest extends TestCase
 
     public function testUserCanGetHisFavoriteFilms(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
         $favoriteFilms = Film::factory()->count(2)
             ->state(['status' => FilmStatus::READY->value])
@@ -368,7 +378,9 @@ class FilmResourceTest extends TestCase
         $this->assertDatabaseHas('genres', ['name' => 'Comedy']);
         $this->assertDatabaseHas('genres', ['name' => 'Drama']);
 
-        $filmGenres = $film->fresh()->genres->pluck('name')->toArray();
+        $freshFilm = $film->fresh();
+        $this->assertNotNull($freshFilm);
+        $filmGenres = $freshFilm->genres->pluck('name')->toArray();
         $this->assertContains('Comedy', $filmGenres);
         $this->assertContains('Drama', $filmGenres);
     }

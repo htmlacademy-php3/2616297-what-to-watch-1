@@ -19,7 +19,6 @@ final class DatabaseSeeder extends Seeder
 {
     /**
      * @return void
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function run(): void
     {

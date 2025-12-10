@@ -13,7 +13,6 @@ use Spatie\LaravelData\Support\Validation\ValidationContext;
 /**
  * Data-объект с данными из запроса на обновлении информации о пользователе
  *
- * @psalm-suppress PossiblyUnusedProperty
  */
 final class UpdateUserData extends Data
 {
@@ -24,8 +23,6 @@ final class UpdateUserData extends Data
      * @param string $name
      * @param string|null $password
      * @param string|null $file
-     *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         public string $email,
@@ -48,8 +45,6 @@ final class UpdateUserData extends Data
      * @method static string redirect()
      * @method static string redirectRoute()
      * @method static string errorBag()
-     *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public static function rules(): array
     {

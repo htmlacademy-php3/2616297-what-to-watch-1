@@ -11,7 +11,11 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class CommentModelTest extends TestCase
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-suppress InvalidArgument
+ */
+final class CommentModelTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -23,6 +27,7 @@ class CommentModelTest extends TestCase
                     ->has(Genre::factory())
             );
 
+        /** @var User $attachedUser */
         $attachedUser = User::factory()->create();
 
         $withUserAttached = $withoutUserAttached->for($attachedUser);

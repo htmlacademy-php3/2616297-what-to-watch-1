@@ -10,7 +10,6 @@ use Spatie\LaravelData\Data;
 /**
  * Data-объект с данными из запроса на получение списка фильмов
  *
- * @psalm-suppress PossiblyUnusedProperty
  */
 final class FilmsRequestData extends Data
 {
@@ -22,7 +21,6 @@ final class FilmsRequestData extends Data
      * @param string|null $status
      * @param string|null $orderBy
      * @param string|null $orderTo
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         public ?int $page = null,

@@ -24,7 +24,6 @@ readonly final class FilmService
      * @param FilmRepositoryInterface $filmRepository
      * @param IMDBRepositoryInterface $IMDBRepository
      * @param GenreRepositoryInterface $genreRepository
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private FilmRepositoryInterface $filmRepository,

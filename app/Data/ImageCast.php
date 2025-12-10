@@ -13,7 +13,6 @@ use Spatie\LaravelData\Support\DataProperty;
 /**
  * Вспомогательный класс для преобразования файла запроса в файл на сервере приложения
  *
- * @psalm-suppress PossiblyUnusedProperty
  */
 final class ImageCast implements Cast
 {

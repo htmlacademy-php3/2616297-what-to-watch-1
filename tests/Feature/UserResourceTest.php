@@ -10,7 +10,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
-class UserResourceTest extends TestCase
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
+final class UserResourceTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -20,6 +23,7 @@ class UserResourceTest extends TestCase
             RoleSeeder::class,
         );
 
+        /** @var User $user */
         $user = User::factory()->create();
 
         $this->actingAs($user);
@@ -36,6 +40,7 @@ class UserResourceTest extends TestCase
 
     public function testUserCanModifyHisData(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
 
         $this->actingAs($user);

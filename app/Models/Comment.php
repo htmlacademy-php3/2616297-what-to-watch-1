@@ -57,8 +57,6 @@ final class Comment extends Model
 
     /**
      * @return BelongsTo
-     *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function film(): BelongsTo
     {
@@ -67,8 +65,6 @@ final class Comment extends Model
 
     /**
      * @return BelongsTo
-     *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function user(): BelongsTo
     {
@@ -77,7 +73,6 @@ final class Comment extends Model
 
     /**
      * @return string
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function getAuthorNameAttribute(): string
     {

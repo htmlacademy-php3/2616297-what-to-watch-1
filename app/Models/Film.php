@@ -92,7 +92,6 @@ final class Film extends Model
 
     /**
      * @return BelongsToMany
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function genres(): BelongsToMany
     {
@@ -101,7 +100,6 @@ final class Film extends Model
 
     /**
      * @return BelongsToMany
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function users(): BelongsToMany
     {
@@ -110,7 +108,6 @@ final class Film extends Model
 
     /**
      * @return HasMany
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function comments(): HasMany
     {
@@ -121,7 +118,6 @@ final class Film extends Model
      * Возвращает рейтинг исходя из отзывов о фильме
      *
      * @return float
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function getRatingAttribute(): float
     {

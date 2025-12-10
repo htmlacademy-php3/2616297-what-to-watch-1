@@ -44,7 +44,6 @@ final class Genre extends Model
      * Связь с фильмами
      *
      * @return BelongsToMany
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function films(): BelongsToMany
     {

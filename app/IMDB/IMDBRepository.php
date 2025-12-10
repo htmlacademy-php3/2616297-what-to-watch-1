@@ -22,7 +22,6 @@ readonly final class IMDBRepository implements IMDBRepositoryInterface
     /**
      * @param ClientInterface $client
      *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private ClientInterface $client,

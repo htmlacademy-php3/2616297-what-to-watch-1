@@ -14,8 +14,11 @@ use Tests\TestCase;
 
 /**
  * Класс для тестирования ресурса комментариев
+ *
+ * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-suppress InvalidArgument
  */
-class CommentResourceTest extends TestCase
+final class CommentResourceTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -26,6 +29,7 @@ class CommentResourceTest extends TestCase
      */
     public function testUserCanAddComment(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
         $film = Film::factory()->create();
 
@@ -51,6 +55,7 @@ class CommentResourceTest extends TestCase
      */
     public function testUserCanUpdateOwnComment(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
         $film = Film::factory()->create();
         $comment = Comment::factory()->create([
@@ -84,6 +89,7 @@ class CommentResourceTest extends TestCase
      */
     public function testUserCanDeleteOwnComment(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
         $film = Film::factory()->create();
         $comment = Comment::factory()->create([
@@ -108,7 +114,9 @@ class CommentResourceTest extends TestCase
      */
     public function testUserCannotDeleteOthersComment(): void
     {
+        /** @var User $owner */
         $owner = User::factory()->create();
+        /** @var User $otherUser */
         $otherUser = User::factory()->create();
         $film = Film::factory()->create();
         $comment = Comment::factory()->create([
@@ -135,7 +143,9 @@ class CommentResourceTest extends TestCase
     {
         $this->seed(RoleSeeder::class);
 
+        /** @var User $user */
         $user = User::factory()->create();
+        /** @var User $moderator */
         $moderator = User::factory()->create();
         $moderator->assignRole('moderator');
 

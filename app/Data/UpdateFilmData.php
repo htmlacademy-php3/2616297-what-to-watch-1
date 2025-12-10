@@ -13,7 +13,6 @@ use Spatie\LaravelData\Support\Validation\ValidationContext;
 /**
  * Data-объект с данными из запроса на обновление информации о фильме
  *
- * @psalm-suppress PossiblyUnusedProperty
  */
 final class UpdateFilmData extends Data
 {
@@ -34,8 +33,6 @@ final class UpdateFilmData extends Data
      * @param int|null $run_time
      * @param int|null $released
      * @param FilmStatus $status
-     *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         #[MapName('name', 'title')]
@@ -65,7 +62,6 @@ final class UpdateFilmData extends Data
      * @method static string redirect()
      * @method static string redirectRoute()
      * @method static string errorBag()
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public static function rules(): array
     {

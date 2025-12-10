@@ -10,8 +10,6 @@ use Spatie\LaravelData\Support\Validation\ValidationContext;
 
 /**
  * Data-объект для обновления информации комментария
- *
- * @psalm-suppress PossiblyUnusedProperty
  */
 final class UpdateCommentData extends Data
 {
@@ -19,8 +17,6 @@ final class UpdateCommentData extends Data
      * @param string $text
      * @param int|null $rating
      * @param int $id
-     *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         public string $text,
@@ -40,7 +36,6 @@ final class UpdateCommentData extends Data
      * @method static string redirect()
      * @method static string redirectRoute()
      * @method static string errorBag()
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public static function rules(): array
     {

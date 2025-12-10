@@ -11,7 +11,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
-class PromoResourceTest extends TestCase
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
+final class PromoResourceTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -19,6 +22,7 @@ class PromoResourceTest extends TestCase
     {
         $this->seed(RoleSeeder::class);
 
+        /** @var User $moderatorUser */
         $moderatorUser = User::factory()->create();
         $moderatorUser->assignRole('moderator');
 
@@ -59,6 +63,7 @@ class PromoResourceTest extends TestCase
     public function testOrdinaryUserCannotSetPromo(): void
     {
         $film = Film::factory()->create();
+        /** @var User $user */
         $user = User::factory()->create();
 
         $this->actingAs($user);
