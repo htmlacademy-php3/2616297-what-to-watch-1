@@ -10,8 +10,7 @@
 >
     <projectFiles>
         <directory name="app" />
-        <directory name="database/factories" />
-        <directory name="database/seeders" />
+        <directory name="tests" />
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>
@@ -20,9 +19,4 @@
     <plugins>
         <pluginClass class="Psalm\LaravelPlugin\Plugin" />
     </plugins>
-
-    <stubs>
-        <file name="vendor/psalm/plugin-laravel/stubs/common/Database/Eloquent/Model.stubphp" />
-    </stubs>
-
 </psalm>
