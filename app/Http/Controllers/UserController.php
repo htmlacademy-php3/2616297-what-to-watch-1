@@ -14,7 +14,6 @@ use App\Services\AuthService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Sanctum\NewAccessToken;
 
 /**
  * Контроллер запросов, связанных с пользователем
