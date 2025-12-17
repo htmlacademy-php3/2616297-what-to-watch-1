@@ -8,7 +8,6 @@ use App\Data\FilmsRequestData;
 use App\Data\FilmCreateData;
 use App\Data\UpdateFilmData;
 use App\Http\Responses\BaseResponse;
-use App\IMDB\IMDBRepository;
 use App\Http\Responses\SuccessResponse;
 use App\Services\FilmService;
 use Illuminate\Support\Facades\Auth;
